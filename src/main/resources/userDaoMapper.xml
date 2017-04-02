@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.xuhuanfeng.webmoment.dao.UserDao">
+
+    <select id="getAllPubicUser" parameterType="User" resultType="User">
+        SELECT * FROM user
+        WHERE user.type = 'P' and user.uid NOT IN (
+          SELECT pid from follow
+          WHERE follow.oid = #{uid}
+        )
+    </select>
+    <select id="login" parameterType="User" resultType="User">
+        SELECT * FROM user WHERE phone = #{phone} and password = MD5(#{password})
+    </select>
+    <select id="getAllFollowerUser" parameterType="User" resultType="User">
+        select * FROM user,follow
+        WHERE
+        follow.pid = #{uid} AND  follow.oid = user.uid
+    </select>
+    <select id="getAllFollowedUser" parameterType="User" resultType="User">
+        SELECT * FROM user, follow
+        WHERE
+        follow.oid = #{uid} AND follow.pid = user.uid
+    </select>
+
+    <delete id="removeFollow" parameterType="int" >
+        DELETE FROM follow WHERE oid = #{arg0} AND pid = #{arg1}
+    </delete>
+
+
+    <insert id="addFollow" parameterType="int" >
+        INSERT INTO follow(oid, pid) VALUES (#{arg0}, #{arg1})
+    </insert>
+    <insert id="register" parameterType="User">
+        INSERT ignore INTO user (email, phone, nickname, icon, enrolltime, status, type, introduction, password)
+        VALUES (#{email}, #{phone}, #{nickname}, #{icon}, now(), 'Y', #{type}, 'Hello World', MD5(#{password}))
+    </insert>
+
+    <update id="updateIntroduction" parameterType="User" >
+       UPDATE user SET introduction = #{introduction}
+       WHERE uid = #{uid}
+     </update>
+    <update id="updateIcon" parameterType="User">
+        UPDATE user SET icon = #{icon}
+        WHERE uid =  #{uid}
+    </update>
+    <update id="updatePassword" parameterType="User">
+        UPDATE user SET  password = MD5(#{password})
+        WHERE uid = #{uid} AND password = MD5(#{oldPassword})
+    </update>
+</mapper>

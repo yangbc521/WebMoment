@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xuhuanfeng.webmoment.dao.CommentDao">
+
+    <select id="getPassedComment" parameterType="int" resultType="Comment">
+        SELECT * FROM comment WHERE eid = #{eid} and pass = 'Y'
+    </select>
+    <select id="getUnpassedComment" parameterType="int" resultType="Comment">
+        SELECT * FROM comment WHERE eid = #{eid} and pass = 'N'
+    </select>
+
+    <insert id="addComment" parameterType="Comment" >
+        INSERT ignore INTO comment(eid, content, author, publishtime, pass)
+        VALUES (#{eid}, #{content}, #{author}, now(), 'N')
+    </insert>
+
+    <update id="passComment" parameterType="int" >
+        UPDATE comment SET pass = 'Y' WHERE cid = #{cid}
+    </update>
+    <update id="ignoreComment" parameterType="int">
+        UPDATE  comment SET pass = 'I' WHERE cid = #{cid}
+    </update>
+
+</mapper>

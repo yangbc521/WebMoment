@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.xuhuanfeng.webmoment.dao.EssayDao">
+    <select id="getEssayByPublisher" parameterType="String" resultType="Essay">
+        SELECT * FROM essay WHERE publisher = #{uid}
+    </select>
+    
+    <update id="deleteEssay" parameterType="String">
+        UPDATE essay SET status = 'N' WHERE eid = #{eid} and publisher = #{uid}
+    </update>
+
+    <insert id="publishEssay" parameterType="Essay">
+        INSERT ignore INTO essay(title, content, author, publisher, publishtime, status)
+        VALUES (#{title}, #{content}, #{author}, #{publisher}, now(), 'Y')
+    </insert>
+</mapper>
